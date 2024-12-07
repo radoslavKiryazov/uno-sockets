@@ -28,7 +28,7 @@
 
       <button
         v-if="userStore.connectedPlayers"
-        :disabled="userStore.connectedPlayers.length < 1"
+        :disabled="userStore.connectedPlayers.length < 2"
         @click="onGameStart"
         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full pointer disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         :title="

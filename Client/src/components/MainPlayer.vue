@@ -25,13 +25,14 @@
           :key="cardKey(card)"
           :card="card"
           :onclick="() => onPlayCard(card)"
+          :hover="true"
         />
       </div>
       <div class="flex gap-5 w-full h-[40px] items-center justify-center">
         <button
-          v-if="true"
+          v-if="isPlayerTurn && !isThereAPlayableCard"
           class="bg-blue-500 text-white font-bold py-2 px-4 gap-2 rounded-lg shadow-md hover:bg-blue-600 transition flex flex-row justify-center items-center"
-          :disabled="!isPlayerTurn"
+          :disabled="!isPlayerTurn && !isThereAPlayableCard"
           @click="() => onDrawCardButton()"
         >
           <img src="/assets/draw-card.png" class="h-[35px] w-[35px]" />
@@ -137,7 +138,6 @@ onUnmounted(() => {
 
 const onDrawCardButton = () => {
   const playerId = userStore.user.id;
-  console.log("playerId", userStore.user.id);
   socket.emit("draw-card", { playerId });
 };
 
@@ -165,11 +165,21 @@ const onPlayCard = (card: Card) => {
 console.log("mainplayerTest", handStore.state.hand);
 // const playerHand = computed(() => gameStore.getPlayerHand);
 
-// const isThereAPlayableCard = computed(() => gameStore.isThereAPlayableCard);
+const isThereAPlayableCard = computed(() => {
+  if (handStore.state.hand.hand) {
+    return handStore.state.hand.hand.some((card) =>
+      canPlayCard(
+        card,
+        handStore.state.discardPile[handStore.state.discardPile.length - 1]
+      )
+    );
+  }
+});
 
 const isPlayerTurn = computed(() => {
   return handStore.state.playerAtHand === userStore.user.username;
 });
+console.log("isThereAPlayableCard", !isPlayerTurn && isThereAPlayableCard);
 
 console.log("test", userStore.user.username);
 console.log("test1", handStore.state.playerAtHand);

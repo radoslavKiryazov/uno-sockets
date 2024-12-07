@@ -1,9 +1,5 @@
 <template>
-  <img
-    :src="cardImage"
-    class="max-h-[200px] max-w-[200px] hover:animate-pulse cursor-pointer animate-fade-up animate-ease-in-out"
-    @click="onClick"
-  />
+  <img :src="cardImage" :class="imageClass" @click="onClick" />
 </template>
 
 <script lang="ts" setup>
@@ -13,9 +9,10 @@ import type { Card } from "../../../Models/Card";
 const props = defineProps<{
   card: Card;
   onClick?: () => void;
+  hover?: boolean;
 }>();
 
-const { card } = props;
+const { card, hover } = props;
 console.log("card from card component", card);
 
 const cardImage = computed(() => {
@@ -40,5 +37,10 @@ const cardImage = computed(() => {
   if (card.type === "WILDDRAWFOUR") {
     return `/assets/deck/wild-draw-four.png`;
   }
+});
+const imageClass = computed(() => {
+  const baseClass =
+    "max-h-[200px] max-w-[200px] cursor-pointer animate-fade-up animate-ease-in-out";
+  return hover ? `${baseClass} hover:animate-pulse` : baseClass;
 });
 </script>
