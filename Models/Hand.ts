@@ -1,9 +1,9 @@
-import { cardPrinter } from "./Card_model";
-import type { Card, Colour } from "./Card_model";
+import { cardPrinter } from "./Card";
+import type { Card, Colour } from "./Card";
 
-import { createDeck } from "./Deck_model";
-import type { Deck } from "./Deck_model";
-import type { Player } from "./Player_model";
+import { createDeck } from "./Deck";
+import type { Deck } from "./Deck";
+import type { Player } from "./Player";
 
 export interface Hand {
   /** The discard pile of played cards */

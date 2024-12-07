@@ -4,14 +4,14 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import http from "http";
 import { Server } from "socket.io";
-import { createGame } from "./Models/Game_model";
+import { createGame } from "../Models/Game";
 
 import AuthRoute from "./Routes/authRoute";
 import UserRoute from "./Routes/userRoute";
-import { Player } from "./Models/Player_model";
-import { Game } from "./Models/Game_model";
+import { Player } from "../Models/Player";
+import { Game } from "../Models/Game";
 
-import { type Colour } from "./Models/Card_model";
+import { type Colour } from "../Models/Card";
 
 dotenv.config();
 

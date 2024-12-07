@@ -1,5 +1,5 @@
-import type { Card, Colour } from "./Card_model";
-import { standardShuffler } from "../Utilities/random_util";
+import type { Card, Colour } from "./Card";
+import { standardShuffler } from "./utils/random_utils";
 
 export const colors: Colour[] = ["Red", "Blue", "Green", "Yellow"];
 export type Deck = {

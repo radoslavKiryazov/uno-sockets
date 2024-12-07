@@ -1,4 +1,4 @@
-import type { Card } from "./Card_model";
+import type { Card } from "./Card";
 
 export interface Player {
   readonly username: string;

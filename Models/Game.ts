@@ -1,6 +1,6 @@
-import type { Player } from "./Player_model";
-import type { Hand } from "./Hand_model";
-import { createHand } from "./Hand_model";
+import type { Player } from "./Player";
+import type { Hand } from "./Hand";
+import { createHand } from "./Hand";
 
 export type GameState = "ONGOING" | "ENDED";
 
