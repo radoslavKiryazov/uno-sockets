@@ -1,7 +1,7 @@
 import type { Card } from "./Card_model";
 
 export interface Player {
-  readonly name: string;
+  readonly username: string;
   hand: Card[];
   score: number;
   isBot?: boolean;
@@ -10,7 +10,7 @@ export interface Player {
 }
 
 export const createPlayer = (
-  name: string,
+  username: string,
   hand: Card[],
   isBot = false,
   calledUNO = false,

@@ -4,8 +4,6 @@ import { onUnmounted } from 'vue';
 
 let socket: Socket | null = null;
 
-console.log(socket)
-
 export const initializeSocket = () => {
     if (!socket) {
         socket = io('http://localhost:3000');

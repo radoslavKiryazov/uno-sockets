@@ -5,26 +5,34 @@
         <DiscardPile />
         <Deck />
       </div>
-      <!-- <div class="flex flex-col justify-center items-center">
+      <div class="flex flex-col justify-center items-center">
         Current color:
         <div
           class="flex h-[50px] w-[50px] rounded-[50px] border-white-100 border-5"
           :style="{ backgroundColor: color }"
         ></div>
-      </div> -->
+        <PlayerAtHandDisplay />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from "vue";
 import DiscardPile from "./DiscardPile.vue";
 import Deck from "./Deck.vue";
+
 import { useGameStore } from "../stores/newGameStore";
-import { computed } from "vue";
-import ActionMessages from "./ActionMessages.vue";
+import { useHandStore } from "../stores/handStore";
 
+import PlayerAtHandDisplay from "./PlayerAtHandDisplay.vue";
 const gameStore = useGameStore();
-console.log('currentHand',gameStore.state.hand);
+const handStore = useHandStore();
+console.log("currentHand", gameStore.state.hand);
 
-//const color = computed(() => gameStore.topDiscardCard?.colour || "white");
+const color = computed(
+  () =>
+    handStore.state.discardPile[handStore.state.discardPile.length - 1]
+      .colour || "white"
+);
 </script>

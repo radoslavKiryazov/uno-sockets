@@ -84,6 +84,7 @@ const handleSubmit = async () => {
             const socket = initializeSocket();
 
             const { username, _id } = response.data;
+            console.log('username', username);
 
             console.log('data', response.data);
 
@@ -107,7 +108,7 @@ const handleSubmit = async () => {
                 socket.disconnect();
             });
 
-            userStore.setUser(username);
+            userStore.setUserName(username);
             socket.emit('player-joined', { username });
             router.push('/waitingroom');
         } else {

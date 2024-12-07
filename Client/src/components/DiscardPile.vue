@@ -8,7 +8,7 @@
     <div
       class="absolute bottom-2 left-2 bg-white text-black text-lg font-bold rounded-full h-10 w-10 flex items-center justify-center shadow-lg z-10"
     >
-      {{ store.state.hand.discardPile.length}}
+      {{ discardPileSize }}
     </div>
   </div>
 </template>
@@ -16,11 +16,16 @@
 <script lang="ts" setup>
 import CardComponent from "./CardComponent.vue";
 import { useGameStore } from "../stores/newGameStore";
+import { useHandStore } from "../stores/handStore";
 import { computed } from "vue";
 
 const store = useGameStore();
+const handStore = useHandStore();
 
-const topDiscardCard = computed(() => store.state.hand.discardPile[store.state.hand.discardPile.length - 1]);
+const topDiscardCard = computed(
+  () => handStore.state.discardPile[handStore.state.discardPile.length - 1]
+);
+const discardPileSize = computed(() => handStore.state.discardPile.length);
 
 const cardKey = computed(() => {
   if (!topDiscardCard.value) return "default";

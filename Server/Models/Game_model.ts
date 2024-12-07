@@ -39,11 +39,11 @@ export const createGame = (players: Player[], targetScore = 500): Game => {
       const points = pointCalculator(players, handWinner);
       handWinner.score += points;
       console.log(
-        `${handWinner.name} wins the hand and earns ${points} points!`
+        `${handWinner.username} wins the hand and earns ${points} points!`
       );
       console.log(
         `Current scores: ${players
-          .map((p) => `${p.name}: ${p.score}`)
+          .map((p) => `${p.username}: ${p.score}`)
           .join(", ")}`
       );
     }

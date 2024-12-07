@@ -11,13 +11,13 @@
     <div
       class="absolute bottom-4 right-4 bg-white text-black text-lg font-bold rounded-full h-10 w-10 flex items-center justify-center shadow-lg"
     >
-      {{ props.player.hand.length }}
+      {{ handSize }}
     </div>
 
     <div
       class="absolute top-2 left-2 bg-white text-black text-sm font-bold px-2 py-1 rounded shadow-md"
     >
-      {{ props.player.name }}
+      {{ props.player.username }}
     </div>
 
     <div
@@ -40,19 +40,25 @@
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
 import type { Player } from "../model/Player_model";
-import { useGameStore } from "../stores/gameStore";
-const gameStore = useGameStore();
-const playerAtHandIndex = computed(() => gameStore.playerAtHandIndex);
+import { useHandStore } from "../stores/handStore";
+
+const handStore = useHandStore();
+
 const props = defineProps<{
   player: Player;
   playerIndex: number;
 }>();
 
 const isCurrentPlayer = computed((): boolean => {
-  console.log("playerAtHandIndex", playerAtHandIndex.value);
-  console.log(props.playerIndex);
-  return playerAtHandIndex.value === props.playerIndex;
+  return handStore.state.playerAtHand === props.player.username;
 });
+
+console.log("oponent", props.player);
+console.log("oponentname", props.player.name);
+console.log("playerAtHand", handStore.state.playerAtHand);
+console.log("isCurrentPlayer", isCurrentPlayer);
+
+const handSize = computed(() => props.player.hand.length);
 
 console.log("isCurrentPlayer", isCurrentPlayer);
 </script>

@@ -4,8 +4,8 @@ import router from "./router";
 import { createPinia } from "pinia";
 import "./index.css";
 
-const app = createApp(App);
 const pinia = createPinia();
+const app = createApp(App);
 
 app.use(router);
 app.use(pinia);

@@ -4,11 +4,11 @@
       <h1>Pick a color</h1>
       <div class="grid grid-cols-2 gap-4">
         <button
-          v-for="color in colours"
-          :key="color"
-          :style="{ backgroundColor: color }"
+          v-for="colour in colours"
+          :key="colour"
+          :style="{ backgroundColor: colour }"
           class="w-10 h-10 rounded-full"
-          @click="selectColour(color)"
+          @click="selectColour(colour)"
         ></button>
       </div>
     </div>
@@ -17,16 +17,20 @@
 <script setup lang="ts">
 import Popup from "./Popup.vue";
 import type { Colour } from "../../model/Card_model";
-import { defineProps } from "vue";
+import { getSocket } from "../../services/socketService";
+import { usePopUpStore } from "../../stores/popUpStore";
 
-const colours: Colour[] = ["Blue", "Green", "Red", "Yellow"];
+const colours: Colour[] = ["Blue", "Green", "Red", "Yellow"] as const;
 
-const props = defineProps<{
-  onColourSelected: (color: Colour) => void;
-}>();
+const socket = getSocket();
+const popUpStore = usePopUpStore();
+const selectColour = (colour: Colour) => {
+  if (socket) {
+    console.log("emit colourSelected", colour);
 
-const selectColour = (color: Colour) => {
-  console.log(color);
-  props.onColourSelected(color);
+    popUpStore.hideColourPopUp();
+
+    socket.emit("change-colour", { colour });
+  }
 };
 </script>

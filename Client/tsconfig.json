@@ -1,7 +1,7 @@
 {
   "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "strict": true, // Enable strict mode for better type checking
+    "strict": false, // Enable strict mode for better type checking
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,

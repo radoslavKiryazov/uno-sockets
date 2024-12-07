@@ -8,11 +8,16 @@ import { createGame } from "./Models/Game_model";
 
 import AuthRoute from "./Routes/authRoute";
 import UserRoute from "./Routes/userRoute";
+import { Player } from "./Models/Player_model";
+import { Game } from "./Models/Game_model";
+
+import { type Colour } from "./Models/Card_model";
 
 dotenv.config();
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
+const mongoDBURI = process.env.MONGO_DB as string;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -26,10 +31,11 @@ const io = new Server(server, {
 });
 
 let connectedPlayers = [] as any;
+let game: Game | null = null;
 
 //Database Conncetion
 mongoose
-  .connect(process.env.MONGO_DB as string)
+  .connect(mongoDBURI)
   .then(() => {
     console.log("Connected to MongoDB");
   })
@@ -63,9 +69,8 @@ app.use((req, res, next) => {
 });
 // Running Server on PORT 3000
 server.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT} :)`);
+  console.log(`Server is running on port ${port} :)`);
 });
-
 
 io.on("start-game", () => {
   console.log("requested to start game.");
@@ -92,36 +97,153 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("change-colour", ({ colour }: { colour: Colour }) => {
+    if (!game) return;
+
+    const currentHand = game?.getCurrentHand();
+
+    if (!currentHand) return;
+
+    const topCard = currentHand.discardPile[currentHand.discardPile.length - 1];
+
+    if (topCard.type === "WILD" || topCard.type === "WILDDRAWFOUR") {
+      topCard.colour = colour;
+    }
+    console.log("topCard after changing colour", topCard);
+    io.emit("update-discard-pile", {
+      discardPile: currentHand.discardPile,
+    });
+  });
+
   socket.on("start-game", () => {
     console.log("requested to start game.");
     //create the game
-    const game = createGame(connectedPlayers, 500);
+    game = createGame(connectedPlayers, 500);
     game.startNewHand();
 
     const currentHand = game.getCurrentHand();
+    if (!currentHand) {
+      return;
+    }
 
+    connectedPlayers.forEach((player) => {
+      const otherPlayers = connectedPlayers.filter(
+        (p) => p.id !== player.id // Exclude the current player
+      );
 
-    if(!currentHand) {return }
+      console.log("otherPlayers", otherPlayers);
+      const deckSize = currentHand.deck.size();
+      const discardPile = currentHand.discardPile;
+      const playerAtHand = currentHand.getPlayerAtHand();
 
-    const handsByPlayer = game.players.reduce((acc: any, hand: any, index: number) => {
-      const player = connectedPlayers[index];
-      if (player) acc[player.id] = hand;
-      return acc;
-    }, {});
+      io.to(player.id).emit("game-started", {
+        players: otherPlayers,
+        deckSize: deckSize,
+        discardPile: discardPile,
+        currentHand,
+        playerAtHand,
+      });
+    });
+
+    const handsByPlayer = game.players.reduce(
+      (acc: any, hand: any, index: number) => {
+        const player = connectedPlayers[index];
+        if (player) acc[player.id] = hand;
+        return acc;
+      },
+      {}
+    );
 
     Object.keys(handsByPlayer).forEach((socketId) => {
       io.to(socketId).emit("your-hand", {
         hand: handsByPlayer[socketId],
       });
     });
+  });
 
-    io.emit("game-started", {
-      currentHand,
+  socket.on("draw-card", ({ playerId }: { playerId: string }) => {
+    console.log(`${playerId} requested to draw a card`);
+
+    //send the info of the player who drew the card.
+
+    // Locate the player
+    const player = connectedPlayers.find((p) => p.id === playerId);
+    const otherPlayers = connectedPlayers.filter((p) => p.id !== playerId);
+
+    console.log("player before drawing", player);
+    console.log("game", game);
+    const currentHand = game?.getCurrentHand();
+    const card = currentHand?.drawCard(player);
+    console.log("deck size", currentHand?.deck.size());
+    console.log("card drawn", card);
+
+    console.log("player after drawing", player.hand);
+
+    io.to(playerId).emit("update-hand", {
+      card: card,
+    });
+
+    console.log("connectedPlayers", connectedPlayers[0].hand);
+
+    io.emit("update-player-info", {
+      player,
+    });
+
+    io.emit("update-deck", {
+      deckSize: currentHand?.deck.size(),
     });
   });
 
+  socket.on(
+    "play-card",
+    ({ playerId, card }: { playerId: string; card: any }) => {
+      if (!game) return;
+
+      console.log(`${playerId} requested to play a card`);
+      const player = connectedPlayers.find((p) => p.id === playerId);
+      const currentHand = game?.getCurrentHand();
+
+      if (!currentHand) return;
+
+      currentHand.playCard(card);
+      console.log("card played", card);
+      console.log("discard pile", currentHand.discardPile);
+
+      io.emit("update-game", {
+        connectedPlayers,
+      });
+
+      io.emit("update-discard-pile", {
+        discardPile: currentHand?.discardPile,
+      });
+
+      io.emit("update-player-at-hand", {
+        playerAtHand: currentHand.getPlayerAtHand(),
+      });
+      io.emit("update-deck", {
+        deckSize: currentHand?.deck.size(),
+      });
+
+      const handsByPlayer = game.players.reduce(
+        (acc: any, hand: any, index: number) => {
+          const player = connectedPlayers[index];
+          if (player) acc[player.id] = hand;
+          return acc;
+        },
+        {}
+      );
+
+      Object.keys(handsByPlayer).forEach((socketId) => {
+        io.to(socketId).emit("your-hand", {
+          hand: handsByPlayer[socketId],
+        });
+      });
+    }
+  );
+
   socket.on("disconnect", () => {
     console.log("User Disconnected:", socket.id);
+    socket.removeAllListeners();
 
     const disconnectedPlayer = connectedPlayers.find(
       (player: any) => player.id === socket.id
@@ -137,13 +259,6 @@ io.on("connection", (socket) => {
         connectedPlayers,
       });
     }
-  });
-});
-
-//Test API
-app.get("/test", (req, res) => {
-  res.json({
-    message: "Hello World !",
   });
 });
 

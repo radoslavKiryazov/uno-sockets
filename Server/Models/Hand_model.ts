@@ -13,7 +13,7 @@ export interface Hand {
   readonly currentTurnIndex: number;
 
   /** Allows the current player to play a card by its index */
-  playCard: (selectedCardIndex: number) => void;
+  playCard: (selectedCard: Card) => void;
 
   /** Allows a player to draw a specified number of cards */
   drawCards: (player: Player, numberOfCards: number) => void;
@@ -37,7 +37,8 @@ export interface Hand {
     directionOfPlay: number
   ) => number;
 
-  drawCard: (currentPlayer: Player, numberOfCards?: number) => void;
+  drawCard: (currentPlayer: Player) => Card;
+  getPlayerAtHand(): Player;
 }
 /**
  * Creates and initializes a new hand with the given players.
@@ -63,16 +64,19 @@ export const createHand = (players: Player[]): Hand => {
 
   const playDrawTwoCard = (currentPlayer: Player, cardIndex: number) => {};
 
-  const playCard = (selectedCardIndex: number) => {
+  const playCard = (selectedCard: Card) => {
     const player = players[currentTurnIndex]; // get the current player
     const { hand } = player;
-    let selectedCard = hand[selectedCardIndex - 1]; // -1 because the index is 1 based
+
+    console.log("Selected card:", selectedCard);
+    console.log("Current player hand:", player.hand);
 
     if (canPlayCard(selectedCard)) {
-      player.hand =
-        hand.findIndex((c) => c === selectedCard) !== -1
-          ? hand.filter((c) => c !== selectedCard)
-          : hand;
+      const index = hand.findIndex(
+        (card) =>
+          card.type === selectedCard.type && card.colour === selectedCard.colour
+      );
+      hand.splice(index, 1)[0];
 
       switch (selectedCard.type) {
         case "NUMBERED": {
@@ -81,7 +85,7 @@ export const createHand = (players: Player[]): Hand => {
           break;
         }
         case "SKIP": {
-          console.log(`${player.name} played a Skip!`);
+          console.log(`${player.username} played a Skip!`);
           currentTurnIndex = (currentTurnIndex + 2) % players.length;
         }
         case "REVERSE": {
@@ -91,16 +95,20 @@ export const createHand = (players: Player[]): Hand => {
           break;
         }
         case "DRAWTWO": {
-          console.log(`${player.name} played a Draw Two!`);
+          console.log(`${player.username} played a Draw Two!`);
 
           const nextPlayer = players[(currentTurnIndex + 1) % players.length];
           currentTurnIndex = (currentTurnIndex + 2) % players.length;
 
-          console.log(`${nextPlayer.name} must draw two cards!`);
-          drawCards(nextPlayer, 2);
+          console.log(`${nextPlayer.username} must draw two cards!`);
+          console.log("draw before", nextPlayer.hand);
+          for (let i = 0; i < 2; i++) {
+            drawCard(nextPlayer);
+          }
           console.log(`
-            ${nextPlayer.name} has drawn two cards and their turn is skipped!
+            ${nextPlayer.username} has drawn two cards and their turn is skipped!
           `);
+          console.log("draw after", nextPlayer.hand);
           break;
         }
         case "WILD": {
@@ -116,10 +124,12 @@ export const createHand = (players: Player[]): Hand => {
           console.log(`You selected ${newColour}!`);
 
           const nextPlayer = players[(currentTurnIndex + 1) % players.length];
-          console.log(`${nextPlayer.name} must draw four cards!`);
-          drawCards(nextPlayer, 4);
+          console.log(`${nextPlayer.username} must draw four cards!`);
+          for (let i = 0; i < 4; i++) {
+            drawCard(nextPlayer);
+          }
 
-          console.log(`${nextPlayer.name}'s turn is skipped!`);
+          console.log(`${nextPlayer.username}'s turn is skipped!`);
           selectedCard = { ...selectedCard, colour: newColour };
           currentTurnIndex = (currentTurnIndex + 2) % players.length;
           break;
@@ -127,11 +137,17 @@ export const createHand = (players: Player[]): Hand => {
       }
       discardPile.push(selectedCard);
 
+      console.log("Current player hand after play:", player.hand);
+
       if (isHandOver()) {
         endHand();
         return;
       }
     }
+  };
+
+  const getPlayerAtHand = () => {
+    return players[currentTurnIndex];
   };
 
   const drawCards = (player: Player, numberOfCards: number) => {
@@ -150,14 +166,16 @@ export const createHand = (players: Player[]): Hand => {
         }
       }
     }
-    console.log(`${player.name} drew ${numberOfCards} card(s)`);
+    console.log(`${player.username} drew ${numberOfCards} card(s)`);
     console.log(player.hand);
   };
 
-  const drawCard = (currentPlayer: Player, numberOfCards: number = 1) => {
-    const drawnCards = deck.deal(numberOfCards);
+  const drawCard = (currentPlayer: Player): Card => {
+    const drawnCards = deck.deal(1);
 
     currentPlayer.hand.push(...drawnCards);
+    const cardToReturn = drawnCards[0];
+    return cardToReturn;
 
     // currentHand.value.deck = { ...currentHand.value.deck };
 
@@ -188,7 +206,7 @@ export const createHand = (players: Player[]): Hand => {
   const endHand = () => {
     const winner = players.find((player) => player.hand.length === 0) || null;
     if (winner) {
-      console.log(`${winner.name} won the hand!`);
+      console.log(`${winner.username} won the hand!`);
     }
   };
   const isHandOver = (): boolean => {
@@ -229,6 +247,7 @@ export const createHand = (players: Player[]): Hand => {
     skipPlayerTurn,
     updatePlayerAtHandIndex,
     drawCard,
+    getPlayerAtHand,
   };
 };
 

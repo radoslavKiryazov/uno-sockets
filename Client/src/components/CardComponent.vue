@@ -3,7 +3,6 @@
     :src="cardImage"
     class="max-h-[200px] max-w-[200px] hover:animate-pulse cursor-pointer animate-fade-up animate-ease-in-out"
     @click="onClick"
-    :key="cardImage"
   />
 </template>
 
@@ -17,6 +16,7 @@ const props = defineProps<{
 }>();
 
 const { card } = props;
+console.log('card from card component', card);
 
 const cardImage = computed(() => {
   if (!props.card) {
