@@ -15,11 +15,9 @@
 
 <script lang="ts" setup>
 import CardComponent from "./CardComponent.vue";
-import { useGameStore } from "../stores/newGameStore";
 import { useHandStore } from "../stores/handStore";
 import { computed } from "vue";
 
-const store = useGameStore();
 const handStore = useHandStore();
 
 const topDiscardCard = computed(

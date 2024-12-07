@@ -22,13 +22,10 @@ import { computed } from "vue";
 import DiscardPile from "./DiscardPile.vue";
 import Deck from "./Deck.vue";
 
-import { useGameStore } from "../stores/newGameStore";
 import { useHandStore } from "../stores/handStore";
 
 import PlayerAtHandDisplay from "./PlayerAtHandDisplay.vue";
-const gameStore = useGameStore();
 const handStore = useHandStore();
-console.log("currentHand", gameStore.state.hand);
 
 const color = computed(
   () =>

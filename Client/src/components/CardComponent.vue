@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { defineProps, computed } from "vue";
-import type { Card } from "../model/Card_model";
+import type { Card } from "../../../Models/Card";
 
 const props = defineProps<{
   card: Card;
@@ -16,7 +16,7 @@ const props = defineProps<{
 }>();
 
 const { card } = props;
-console.log('card from card component', card);
+console.log("card from card component", card);
 
 const cardImage = computed(() => {
   if (!props.card) {

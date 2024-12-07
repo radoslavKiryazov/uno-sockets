@@ -34,15 +34,14 @@
 </template>
 
 <script setup>
-import { useGameStore } from "../stores/gameStore";
-import {useUserStore} from "../stores/userStore";
+import { useUserStore } from "../stores/userStore";
+
 import MainPlayer from "./MainPlayer.vue";
 import Oponent from "./Oponent.vue";
 import Overview from "./Overview.vue";
 import Placeholder from "./Placeholder.vue";
 
-const store = useGameStore();
 const userStore = useUserStore();
 
-console.log('userStore', userStore.store)
+console.log("userStore", userStore.store);
 </script>

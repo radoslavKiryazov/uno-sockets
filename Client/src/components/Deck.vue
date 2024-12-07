@@ -13,13 +13,10 @@
 </template>
 
 <script setup>
-import { useGameStore } from "../stores/newGameStore";
 import { computed } from "vue";
 import { useHandStore } from "../stores/handStore";
 
-const store = useGameStore();
 const handStore = useHandStore();
-console.log('handStore.state.hand.deckSize', handStore.state.hand.deckSize);
+console.log("handStore.state.hand.deckSize", handStore.state.hand.deckSize);
 const deckSize = computed(() => store.state.hand.deck.preparedDeck.length);
-
 </script>

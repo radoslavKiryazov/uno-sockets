@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
-import type { Player } from "../model/Player_model";
+import type { Player } from "../../../Models/Player";
 import { useHandStore } from "../stores/handStore";
 
 const handStore = useHandStore();

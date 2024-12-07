@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { reactive } from "vue";
-import { type Card } from "../model/Card_model";
+
+import { type Card } from "../../../Models/Card";
 import { usePopUpStore } from "./popUpStore";
 
 export const useHandStore = defineStore("handStore", () => {
@@ -74,5 +75,3 @@ export const useHandStore = defineStore("handStore", () => {
 });
 
 //utill
-
-

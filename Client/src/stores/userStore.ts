@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { type User } from "../model/User";
-import { type Player } from "../Models/Player_model";
+
+import { type Player } from "../../../Models/Player";
 
 export const useUserStore = defineStore("player", () => {
-  const user = ref<User>({ id: "", username: "" });
+  const user = ref({ id: "", username: "" });
   const connectedPlayers = ref<Player[]>([]);
 
   const setUserName = (username: string) => {
@@ -39,7 +39,7 @@ export const useUserStore = defineStore("player", () => {
     connectedPlayers.value.push(player);
   };
 
-  const removePlayer = (player: User) => {
+  const removePlayer = (player) => {
     connectedPlayers.value = connectedPlayers.value.filter(
       (p) => p.name !== player.username
     );

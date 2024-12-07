@@ -77,16 +77,16 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted } from "vue";
 import CardComponent from "../components/CardComponent.vue";
-import type { Card } from "../model/Card_model";
+import type { Card } from "../../../Models/Card";
+
 import { canPlayCard } from "../utils/random_utils";
+
 import { useHandStore } from "../stores/handStore";
-import { useGameStore } from "../stores/newGameStore";
 import { useUserStore } from "../stores/userStore";
-import { getSocket } from "../services/socketService";
 import { usePopUpStore } from "../stores/popUpStore";
+import { getSocket } from "../services/socketService";
 
 const handStore = useHandStore();
-const gameStore = useGameStore();
 const userStore = useUserStore();
 const popUpStore = usePopUpStore();
 

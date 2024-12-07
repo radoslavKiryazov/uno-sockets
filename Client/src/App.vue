@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useGameStore } from "./stores/gameStore";
 import { useUserStore } from "./stores/userStore";
 import ColourSelectionPopup from "./components/popups/ColourSelectionPopup.vue";
 import HandEndPopup from "./components/popups/HandEndPopup.vue";
@@ -7,7 +6,6 @@ import GameOverPopup from "./components/popups/GameOverPopup.vue";
 import { useHandStore } from "./stores/handStore";
 import { usePopUpStore } from "./stores/popUpStore";
 
-const gameStore = useGameStore();
 const popUpStore = usePopUpStore();
 
 const { colourPopupTrigger } = popUpStore;
@@ -15,8 +13,8 @@ const { colourPopupTrigger } = popUpStore;
 
 <template>
   <ColourSelectionPopup v-if="colourPopupTrigger.buttonTrigger" />
-  <HandEndPopup v-if="gameStore.handOverPopupTrigger" />
-  <GameOverPopup v-if="gameStore.gameOverPopupTrigger" />
+  <!-- <HandEndPopup v-if="gameStore.handOverPopupTrigger" />
+  <GameOverPopup v-if="gameStore.gameOverPopupTrigger" /> -->
 
   <router-view />
 </template>

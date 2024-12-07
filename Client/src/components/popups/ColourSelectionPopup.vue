@@ -16,7 +16,7 @@
 </template>
 <script setup lang="ts">
 import Popup from "./Popup.vue";
-import type { Colour } from "../../model/Card_model";
+import type { Colour } from "../../../Models/Card";
 import { getSocket } from "../../services/socketService";
 import { usePopUpStore } from "../../stores/popUpStore";
 
